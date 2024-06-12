@@ -13,6 +13,8 @@ Imports:
     stringr,
     validate
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat,
     utils
 Config/fusen/version: 0.5.2
@@ -21,3 +23,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 4.1.0)
+URL: https://angelfelizr.github.io/tidyvalidate/
+VignetteBuilder: knitr
