@@ -1,0 +1,9 @@
+^renv$
+^renv\.lock$
+^dev$
+^LICENSE\.md$
+^README\.Rmd$
+^CODE_OF_CONDUCT\.md$
+^tidyvalidate\.Rproj$
+^\.Rproj\.user$
+^\.github$

@@ -1,0 +1,17 @@
+flat_functions.Rmd:
+  path: dev/flat_functions.Rmd
+  state: active
+  R:
+  - R/action_if_problem.R
+  - R/validate_rules.R
+  tests:
+  - tests/testthat/test-validate_rules.R
+  - tests/testthat/test-action_if_problem.R
+  vignettes: []
+  inflate:
+    flat_file: dev/flat_functions.Rmd
+    vignette_name: .na
+    open_vignette: true
+    check: false
+    document: true
+    overwrite: 'yes'
