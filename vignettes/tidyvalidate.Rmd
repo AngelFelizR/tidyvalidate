@@ -1,8 +1,8 @@
 ---
-title: "tidyvalidate"
+title: "Introducing tidyvalidate"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidyvalidate}
+  %\VignetteIndexEntry{Introducing tidyvalidate}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,6 +14,123 @@ knitr::opts_chunk$set(
 )
 ```
 
+> Make esaer the process of validating data.frames before beginning any process.
+
+## Problem
+
+Start R solution for validations are good for working with vectors, but they aren't so useful when working with data.frames, as we need to apply validations specially at row label.
+
+On the other hand, the `validate` package provides excellent tools to validate data.frames but they divided in several functions to ensure flexibility.
+
+## Solution
+
+`tidyvalidate` wants to simplify the tools provided by the `validate` package to make easier to identify errors and share the results in any useful by like a QC report.
+
+## Example - Finding errors
+
+The `validate_rules()` functions can find errors at column and row level by passing a list with the **summary** and **row_level_errors**.
+
 ```{r setup}
 library(tidyvalidate)
+
+simple_validation <-
+  validate_rules(mtcars,
+                 mpg_string = is.character(mpg),
+                 hp_numeric = is.numeric(hp),
+                 mpg_low = mpg > 15)
+
 ```
+
+- **summary** is a data.table showing in the **fails** columns the mistakes found, at column with *mpg_string* and row level with the *mpg_low*.
+
+```{r}
+simple_validation$summary
+```
+
+- **row_level_errors** is a list of data.tables with a element for each broken rules related to element at row level. In this example, it only shows the *mpg_low* as it is the only at row level with fails rows.
+
+```{r}
+simple_validation$row_level_errors
+```
+
+### Adding indentifiers at row level
+
+When validating elements at row level is useful to add columns that are not related to the test itself but are useful to identify the individual elements with error.
+
+```{r}
+# Creating an unique identifier for each row
+mtcars_names <- mtcars
+mtcars_names$`Car (Name)` <- rownames(mtcars_names)
+rownames(mtcars_names) <- NULL
+
+# Results of validating at row level
+validate_rules(mtcars_names,
+               mpg_string = is.character(mpg),
+               hp_numeric = is.numeric(hp),
+               mpg_low = mpg > 15,
+               keep_rl_cols = "Car (Name)")$row_level_errors
+```
+
+
+### Validating based on enviroment variables
+
+Some this need to create dynamic validations based on variables from the global environment as you see below.
+
+```{r}
+min_mpg <- 12
+
+validate_rules(mtcars_names,
+               mpg_string = is.character(mpg),
+               hp_numeric = is.numeric(hp),
+               mpg_low = mpg > min_mpg,
+               keep_rl_cols = "Car (Name)")
+```
+
+In those cases, we can also pass a list of elements to the `env` argument.
+
+```{r}
+validate_rules(mtcars_names,
+               mpg_string = is.character(mpg),
+               hp_numeric = is.numeric(hp),
+               mpg_low = mpg > var_min_mpg,
+               env = list(var_min_mpg = min_mpg),
+               keep_rl_cols = "Car (Name)")
+```
+
+
+## Example - Alerting if error
+
+Having a report to identify mistake it's really useful, but we don't always want to see the same summaries if all results are good, but we want be alerted about.
+
+That the main purpose of the `action_if_problem()` function. It has the following actions available:
+
+- **stop**: The *(default)* option will show an error if any the rows listed present an failed element.
+
+```{r}
+try({
+  validate_rules(mtcars,
+                 mpg_string = is.character(mpg),
+                 hp_numeric = is.numeric(hp),
+                 mpg_low = mpg > 15) |>
+    action_if_problem("We shound't have cars with low mpg",
+                      problem_action = "stop")
+})
+```
+
+- **warning**: It will let you know that there is an problem without stop running the code and resturnign the same results provided by the `validate_rules()` function.
+
+```{r}
+warning_results <-
+  validate_rules(mtcars,
+                 mpg_string = is.character(mpg),
+                 hp_numeric = is.numeric(hp),
+                 mpg_low = mpg > 15) |>
+  action_if_problem("We shound't have cars with low mpg",
+                    problem_action = "warning")
+
+warning_results
+```
+
+
+
+

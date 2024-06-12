@@ -4,9 +4,18 @@
 \name{tidyvalidate-package}
 \alias{tidyvalidate}
 \alias{tidyvalidate-package}
-\title{tidyvalidate: Tidy Data Validation Infrastructure}
+\title{tidyvalidate: Simplify the use of 'validate' package.}
 \description{
-Simplify the workflow needed to use the tools available in the 'validate' package.
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
+This package simplifies the workflow of the 'validate' package to work with data.frames by providing tools to manage the usage of 'confront', 'validator', 'violating', and 'summary' functions. It also streamlines the integration with base R's 'stop' and 'warning' functions, enhancing error handling and reporting.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://angelfelizr.github.io/tidyvalidate/}
+}
+
 }
 \author{
 \strong{Maintainer}: Angel Feliz \email{angel.esteban.feliz@gmail.com}

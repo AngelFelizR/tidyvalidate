@@ -20,7 +20,6 @@ The list passed as first argument.
 Stop the script if any problem found
 }
 \examples{
-
 try({
   validate_rules(mtcars, "hp high" = hp < 200) |>
     action_if_problem("Here is the error", "stop")

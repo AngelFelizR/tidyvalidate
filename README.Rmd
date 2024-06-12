@@ -17,10 +17,11 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Codecov test coverage](https://codecov.io/gh/AngelFelizR/tidyvalidate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/AngelFelizR/tidyvalidate?branch=master)
 [![R-CMD-check](https://github.com/AngelFelizR/tidyvalidate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AngelFelizR/tidyvalidate/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of `tidyvalidate` is to simplify the workflow of the `validate` package by providing tools to manage the usage of 'confront', 'validator', 'violating', and 'summary' functions. It also streamlines the integration with base R's 'stop' and 'warning' functions, enhancing error handling and reporting.
+The goal of `tidyvalidate` is to simplify the workflow of the `validate` package to work with data.frames by providing tools to manage the usage of 'confront', 'validator', 'violating', and 'summary' functions. It also streamlines the integration with base R's 'stop' and 'warning' functions, enhancing error handling and reporting.
 
 ## Installation
 
@@ -31,11 +32,46 @@ You can install the development version of tidyvalidate like so:
 pak::pak("AngelFelizR/tidyvalidate")
 ```
 
-## Example
+## Example - validate_rules
 
-This is a basic example which shows you how to solve a common problem:
+The `validate_rules()` functions can find errors at column and row level by passing a list with the **summary** and **row_level_errors**.
 
-```{r example}
+```{r setup}
 library(tidyvalidate)
-## basic example code
+
+simple_validation <-
+  validate_rules(mtcars,
+                 mpg_string = is.character(mpg),
+                 hp_numeric = is.numeric(hp),
+                 mpg_low = mpg > 15)
+
+simple_validation
 ```
+
+
+## Example - action_if_problem
+
+After finding a problem you can show an **error** message.
+
+```{r}
+try({
+  validate_rules(mtcars,
+                 mpg_string = is.character(mpg),
+                 hp_numeric = is.numeric(hp),
+                 mpg_low = mpg > 15) |>
+    action_if_problem("We shound't have cars with low mpg")
+})
+```
+
+
+Or just show a **warning**.
+
+```{r}
+validate_rules(mtcars,
+               mpg_string = is.character(mpg),
+               hp_numeric = is.numeric(hp),
+               mpg_low = mpg > 15) |>
+  action_if_problem("We shound't have cars with low mpg",
+                    problem_action = "warning")
+```
+
