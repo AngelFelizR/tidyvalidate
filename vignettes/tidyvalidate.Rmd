@@ -14,21 +14,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-> Make esaer the process of validating data.frames before beginning any process.
+> Make easier the process of validating data.frames before beginning any process.
 
 ## Problem
 
-Start R solution for validations are good for working with vectors, but they aren't so useful when working with data.frames, as we need to apply validations specially at row label.
+Standard R solutions for validations are good for working with vectors, but they aren't so useful when working with data.frames, as we need to apply validations specifically at row level.
 
-On the other hand, the `validate` package provides excellent tools to validate data.frames but they divided in several functions to ensure flexibility.
+On the other hand, the `validate` package provides excellent tools to validate data.frames but they are divided into several functions to ensure flexibility.
 
 ## Solution
 
-`tidyvalidate` wants to simplify the tools provided by the `validate` package to make easier to identify errors and share the results in any useful by like a QC report.
+`tidyvalidate` aims to simplify the tools provided by the validate package to make it easier to identify errors and share the results in any useful way, like a QC report.
 
 ## Example - Finding errors
 
-The `validate_rules()` functions can find errors at column and row level by passing a list with the **summary** and **row_level_errors**.
+The `validate_rules()` function can find errors at column and row level by passing a list with the **summary** and **row_level_errors**.
 
 ```{r setup}
 library(tidyvalidate)
@@ -41,13 +41,13 @@ simple_validation <-
 
 ```
 
-- **summary** is a data.table showing in the **fails** columns the mistakes found, at column with *mpg_string* and row level with the *mpg_low*.
+- **summary** is a data.table showing in the **fails column** the mistakes found, at column with *mpg_string* and row level with the *mpg_low*.
 
 ```{r}
 simple_validation$summary
 ```
 
-- **row_level_errors** is a list of data.tables with a element for each broken rules related to element at row level. In this example, it only shows the *mpg_low* as it is the only at row level with fails rows.
+- **row_level_errors** is a list of data.tables with an element for each broken rule related to elements at row level. In this example, it only shows the *mpg_low* as it is the only row level rule with failed rows.
 
 ```{r}
 simple_validation$row_level_errors
@@ -55,7 +55,7 @@ simple_validation$row_level_errors
 
 ### Adding indentifiers at row level
 
-When validating elements at row level is useful to add columns that are not related to the test itself but are useful to identify the individual elements with error.
+When validating elements at row level, it is useful to add columns that are not related to the test itself but are useful to identify the individual elements with errors.
 
 ```{r}
 # Creating an unique identifier for each row
@@ -74,7 +74,7 @@ validate_rules(mtcars_names,
 
 ### Validating based on enviroment variables
 
-Some this need to create dynamic validations based on variables from the global environment as you see below.
+Sometimes we need to create dynamic validations based on variables from the global environment as you see below.
 
 ```{r}
 min_mpg <- 12
@@ -100,9 +100,9 @@ validate_rules(mtcars_names,
 
 ## Example - Alerting if error
 
-Having a report to identify mistake it's really useful, but we don't always want to see the same summaries if all results are good, but we want be alerted about.
+Having a report to identify mistakes is really useful, but we don't always want to see the same summaries if all results are good, but we want to be alerted about it.
 
-That the main purpose of the `action_if_problem()` function. It has the following actions available:
+That's the main purpose of the `action_if_problem()` function. It has the following actions available:
 
 - **stop**: The *(default)* option will show an error if any the rows listed present an failed element.
 
@@ -117,7 +117,7 @@ try({
 })
 ```
 
-- **warning**: It will let you know that there is an problem without stop running the code and resturnign the same results provided by the `validate_rules()` function.
+- **warning**: It will let you know that there is a problem without stopping the code from running and returning the same results provided by the `validate_rules()` function.
 
 ```{r}
 warning_results <-
@@ -130,7 +130,3 @@ warning_results <-
 
 warning_results
 ```
-
-
-
-

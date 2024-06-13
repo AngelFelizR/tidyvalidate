@@ -1,6 +1,6 @@
-#' Validate domain knowing in a data.frame
+#' Validate domain knowledge in a data.frame
 #'
-#' This function if a wrappers from many utilities from the validate package.
+#' This function is a wrapper for many utilities from the validate package.
 #'
 #' @param df A data.frame or data.table to perform the analysis.
 #' @inheritParams validate::validator
@@ -9,9 +9,9 @@
 #' @param select_rl_rules Defining which row level rules to return as data.table in the row_level_errors element.
 #'
 #' @return
-#' This function return a list of 2 elements:
-#' - summary: Return data.table with the result of all checks.
-#' - row_level_errors: Return a list of data.frames containing the column **Broken Rule**, the columns listed in the `keep_rl_cols` and the columns used to perform the validation.
+#' This function returns a list of 2 elements:
+#' - summary: Returns a data.table with the result of all checks.
+#' - row_level_errors: Returns a list of data.tables containing the column **Broken Rule**, the columns listed in the `keep_rl_cols` and the columns used to perform the validation.
 #'
 #' @export
 #'

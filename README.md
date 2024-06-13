@@ -29,8 +29,8 @@ pak::pak("AngelFelizR/tidyvalidate")
 
 ## Example - validate_rules
 
-The `validate_rules()` functions can find errors at column and row level
-by passing a list with the **summary** and **row_level_errors**.
+The `validate_rules()` function can find errors at the column and row
+level by returning a list with the **summary** and **row_level_errors**.
 
 ``` r
 library(tidyvalidate)
@@ -63,7 +63,7 @@ simple_validation
 
 ## Example - action_if_problem
 
-After finding a problem you can show an **error** message.
+After finding a problem, you can display an **error**.
 
 ``` r
 try({
@@ -71,15 +71,15 @@ try({
                  mpg_string = is.character(mpg),
                  hp_numeric = is.numeric(hp),
                  mpg_low = mpg > 15) |>
-    action_if_problem("We shound't have cars with low mpg")
+    action_if_problem("We shouldn't have cars with low mpg")
 })
-#> [1] "We shound't have cars with low mpg"
+#> [1] "We shouldn't have cars with low mpg"
 #>          name items passes fails   nNA  error warning
 #>        <char> <int>  <int> <int> <int> <lgcl>  <lgcl>
 #> 1: mpg_string     1      0     1     0  FALSE   FALSE
 #> 2:    mpg_low    32     26     6     0  FALSE   FALSE
 #> Error in action_if_problem(validate_rules(mtcars, mpg_string = is.character(mpg),  : 
-#>   We shound't have cars with low mpg
+#>   We shouldn't have cars with low mpg
 ```
 
 Or just show a **warning**.
@@ -89,13 +89,13 @@ validate_rules(mtcars,
                mpg_string = is.character(mpg),
                hp_numeric = is.numeric(hp),
                mpg_low = mpg > 15) |>
-  action_if_problem("We shound't have cars with low mpg",
+  action_if_problem("We shouldn't have cars with low mpg",
                     problem_action = "warning")
-#> [1] "We shound't have cars with low mpg"
+#> [1] "We shouldn't have cars with low mpg"
 #>          name items passes fails   nNA  error warning
 #>        <char> <int>  <int> <int> <int> <lgcl>  <lgcl>
 #> 1: mpg_string     1      0     1     0  FALSE   FALSE
 #> 2:    mpg_low    32     26     6     0  FALSE   FALSE
 #> Warning in action_if_problem(validate_rules(mtcars, mpg_string =
-#> is.character(mpg), : We shound't have cars with low mpg
+#> is.character(mpg), : We shouldn't have cars with low mpg
 ```
