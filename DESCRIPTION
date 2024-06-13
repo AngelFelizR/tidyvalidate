@@ -2,7 +2,7 @@ Package: tidyvalidate
 Title: Simplify the use of 'validate' package.
 Version: 0.1.0
 Authors@R: 
-    person("Angel", "Feliz", , "angel.esteban.feliz@gmail.com", role = c("aut", "cre"))
+    person("Angel", "Feliz", , "angel.esteban.feliz@gmail.com", role = c("aut", "cre", "cph"))
 Description: This package simplifies the workflow of the 'validate'
     package to work with data.frames by providing tools to manage the
     usage of 'confront', 'validator', 'violating', and 'summary'
