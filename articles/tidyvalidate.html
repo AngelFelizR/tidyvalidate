@@ -56,7 +56,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/AngelFelizR/tidyvalidate/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -71,37 +78,37 @@
       <img src="../logo.png" class="logo" alt=""><h1>Introducing tidyvalidate</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/AngelFelizR/tidyvalidate/blob/HEAD/vignettes/tidyvalidate.Rmd" class="external-link"><code>vignettes/tidyvalidate.Rmd</code></a></small>
       <div class="d-none name"><code>tidyvalidate.Rmd</code></div>
     </div>
 
     
     
 <blockquote>
-<p>Make esaer the process of validating data.frames before beginning any
-process.</p>
+<p>Make easier the process of validating data.frames before beginning
+any process.</p>
 </blockquote>
 <div class="section level2">
 <h2 id="problem">Problem<a class="anchor" aria-label="anchor" href="#problem"></a>
 </h2>
-<p>Start R solution for validations are good for working with vectors,
-but they aren’t so useful when working with data.frames, as we need to
-apply validations specially at row label.</p>
+<p>Standard R solutions for validations are good for working with
+vectors, but they aren’t so useful when working with data.frames, as we
+need to apply validations specifically at row level.</p>
 <p>On the other hand, the <code>validate</code> package provides
-excellent tools to validate data.frames but they divided in several
-functions to ensure flexibility.</p>
+excellent tools to validate data.frames but they are divided into
+several functions to ensure flexibility.</p>
 </div>
 <div class="section level2">
 <h2 id="solution">Solution<a class="anchor" aria-label="anchor" href="#solution"></a>
 </h2>
-<p><code>tidyvalidate</code> wants to simplify the tools provided by the
-<code>validate</code> package to make easier to identify errors and
-share the results in any useful by like a QC report.</p>
+<p><code>tidyvalidate</code> aims to simplify the tools provided by the
+validate package to make it easier to identify errors and share the
+results in any useful way, like a QC report.</p>
 </div>
 <div class="section level2">
 <h2 id="example---finding-errors">Example - Finding errors<a class="anchor" aria-label="anchor" href="#example---finding-errors"></a>
 </h2>
-<p>The <code><a href="../reference/validate_rules.html">validate_rules()</a></code> functions can find errors at column
+<p>The <code><a href="../reference/validate_rules.html">validate_rules()</a></code> function can find errors at column
 and row level by passing a list with the <strong>summary</strong> and
 <strong>row_level_errors</strong>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -115,7 +122,7 @@ and row level by passing a list with the <strong>summary</strong> and
 <ul>
 <li>
 <strong>summary</strong> is a data.table showing in the
-<strong>fails</strong> columns the mistakes found, at column with
+<strong>fails column</strong> the mistakes found, at column with
 <em>mpg_string</em> and row level with the <em>mpg_low</em>.</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -127,10 +134,10 @@ and row level by passing a list with the <strong>summary</strong> and
 <span><span class="co">#&gt; 3:    mpg_low    32     26     6     0  FALSE   FALSE</span></span></code></pre></div>
 <ul>
 <li>
-<strong>row_level_errors</strong> is a list of data.tables with a
-element for each broken rules related to element at row level. In this
-example, it only shows the <em>mpg_low</em> as it is the only at row
-level with fails rows.</li>
+<strong>row_level_errors</strong> is a list of data.tables with an
+element for each broken rule related to elements at row level. In this
+example, it only shows the <em>mpg_low</em> as it is the only row level
+rule with failed rows.</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simple_validation</span><span class="op">$</span><span class="va">row_level_errors</span></span>
@@ -146,9 +153,9 @@ level with fails rows.</li>
 <div class="section level3">
 <h3 id="adding-indentifiers-at-row-level">Adding indentifiers at row level<a class="anchor" aria-label="anchor" href="#adding-indentifiers-at-row-level"></a>
 </h3>
-<p>When validating elements at row level is useful to add columns that
-are not related to the test itself but are useful to identify the
-individual elements with error.</p>
+<p>When validating elements at row level, it is useful to add columns
+that are not related to the test itself but are useful to identify the
+individual elements with errors.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating an unique identifier for each row</span></span>
 <span><span class="va">mtcars_names</span> <span class="op">&lt;-</span> <span class="va">mtcars</span></span>
@@ -174,8 +181,8 @@ individual elements with error.</p>
 <div class="section level3">
 <h3 id="validating-based-on-enviroment-variables">Validating based on enviroment variables<a class="anchor" aria-label="anchor" href="#validating-based-on-enviroment-variables"></a>
 </h3>
-<p>Some this need to create dynamic validations based on variables from
-the global environment as you see below.</p>
+<p>Sometimes we need to create dynamic validations based on variables
+from the global environment as you see below.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">min_mpg</span> <span class="op">&lt;-</span> <span class="fl">12</span></span>
 <span></span>
@@ -224,10 +231,10 @@ the global environment as you see below.</p>
 <div class="section level2">
 <h2 id="example---alerting-if-error">Example - Alerting if error<a class="anchor" aria-label="anchor" href="#example---alerting-if-error"></a>
 </h2>
-<p>Having a report to identify mistake it’s really useful, but we don’t
+<p>Having a report to identify mistakes is really useful, but we don’t
 always want to see the same summaries if all results are good, but we
-want be alerted about.</p>
-<p>That the main purpose of the <code><a href="../reference/action_if_problem.html">action_if_problem()</a></code>
+want to be alerted about it.</p>
+<p>That’s the main purpose of the <code><a href="../reference/action_if_problem.html">action_if_problem()</a></code>
 function. It has the following actions available:</p>
 <ul>
 <li>
@@ -252,9 +259,9 @@ error if any the rows listed present an failed element.</li>
 <span><span class="co">#&gt;   We shound't have cars with low mpg</span></span></code></pre></div>
 <ul>
 <li>
-<strong>warning</strong>: It will let you know that there is an
-problem without stop running the code and resturnign the same results
-provided by the <code><a href="../reference/validate_rules.html">validate_rules()</a></code> function.</li>
+<strong>warning</strong>: It will let you know that there is a
+problem without stopping the code from running and returning the same
+results provided by the <code><a href="../reference/validate_rules.html">validate_rules()</a></code> function.</li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">warning_results</span> <span class="op">&lt;-</span></span>
