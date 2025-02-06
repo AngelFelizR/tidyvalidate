@@ -4,21 +4,22 @@
 \name{tidyvalidate-package}
 \alias{tidyvalidate}
 \alias{tidyvalidate-package}
-\title{tidyvalidate: Simplify the use of 'validate' package.}
+\title{tidyvalidate: Simplify the use of 'validate' package}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-This package simplifies the workflow of the 'validate' package to work with data.frames by providing tools to manage the usage of 'confront', 'validator', 'violating', and 'summary' functions. It also streamlines the integration with base R's 'stop' and 'warning' functions, enhancing error handling and reporting.
+`tidyvalidate` is a package that simplifies data validation in R by providing an intuitive interface to the powerful `validate` package. It helps you ensure data quality before analysis by making it easy to check both column-level and row-level conditions in your data frames.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://angelfelizr.github.io/tidyvalidate/}
+  \item \url{https://github.com/AngelFelizR/tidyvalidate}
 }
 
 }
 \author{
-\strong{Maintainer}: Angel Feliz \email{angel.esteban.feliz@gmail.com}
+\strong{Maintainer}: Angel Feliz \email{angel.esteban.feliz@gmail.com} [copyright holder]
 
 }
 \keyword{internal}

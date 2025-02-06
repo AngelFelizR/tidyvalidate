@@ -1,25 +1,59 @@
-#' Stop or raise a warning if any rule is not met
+#' Handle Validation Rule Violations with Custom Actions
 #'
-#' After checking the rules in the data.frame, this function will print
-#' the important cases and stop or raise an alert based on the `problem_action` argument.
+#' Takes the results of data validation checks and performs a specified action
+#' (either stopping execution or raising a warning) when validation rules are violated.
+#' The function provides detailed feedback about which rules failed before taking the
+#' specified action.
 #'
-#' @param x A list containing the summary from [validate_rules()].
-#' @param message_text The message to display when applying the action.
-#' @param problem_action Select if you want to display a warning or stop the code.
+#' @param x A list containing validation results, typically the output from
+#'          [validate_rules()]. Must contain a 'summary' element with columns
+#'          for 'fails' and other validation metrics.
+#' @param message_text Character string containing the message to display when
+#'                     violations are found. This message will appear in both the
+#'                     console output and the error/warning.
+#' @param problem_action Character string specifying the action to take when
+#'                      violations are found. Must be either "stop" (to halt
+#'                      execution with an error) or "warning" (to continue
+#'                      execution after showing a warning).
 #'
-#' @return The list passed as the first argument.
-#' @export
+#' @return Invisibly returns the input list `x`. Note that if problem_action
+#'         is "stop" and violations are found, execution will halt before
+#'         returning.
+#'
+#' @details
+#' The function performs these steps:
+#' 1. Checks if any validation rules were violated (fails > 0)
+#' 2. If violations exist:
+#'    - Prints the provided message_text
+#'    - Displays a summary of only the failed rules
+#'    - Either stops execution or raises a warning based on problem_action
+#' 3. If no violations exist, silently returns the input
+#'
+#' This function is particularly useful in data processing pipelines where you
+#' want to ensure data quality before proceeding with further analysis.
 #'
 #' @examples
-#' # Shows an error
+#' # Example showing how to stop execution on validation failures
 #' try({
-#'   validate_rules(mtcars, "hp high" = hp < 200) |>
-#'     action_if_problem("Here is the error", "stop")
+#'   validate_rules(mtcars, "hp_limit" = hp < 200) |>
+#'     action_if_problem(
+#'       message_text = "Validation failed: Some cars exceed HP limit",
+#'       problem_action = "stop"
+#'     )
 #' })
 #'
-#' # Shows a warning
-#' validate_rules(mtcars, "hp high" = hp < 200) |>
-#'   action_if_problem("Here is the warning", "warning")
+#' # Example showing how to continue with a warning
+#' validation_results <- validate_rules(mtcars, "hp_limit" = hp < 200) |>
+#'   action_if_problem(
+#'     message_text = "Warning: Some cars exceed HP limit",
+#'     problem_action = "warning"
+#'   )
+#'
+#' @seealso
+#' \code{\link{validate_rules}} for creating the validation results this
+#' function processes
+#'
+#' @export
 
 action_if_problem = function(x,
                              message_text,

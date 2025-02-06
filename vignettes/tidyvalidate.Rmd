@@ -1,8 +1,8 @@
 ---
-title: "Introducing tidyvalidate"
+title: "Getting Started with tidyvalidate"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introducing tidyvalidate}
+  %\VignetteIndexEntry{Getting Started with tidyvalidate}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,119 +14,155 @@ knitr::opts_chunk$set(
 )
 ```
 
-> Make easier the process of validating data.frames before beginning any process.
+# Introduction to tidyvalidate
 
-## Problem
+`tidyvalidate` is a package that simplifies data validation in R by providing an intuitive interface to the powerful `validate` package. It helps you ensure data quality before analysis by making it easy to check both column-level and row-level conditions in your data frames.
 
-Standard R solutions for validations are good for working with vectors, but they aren't so useful when working with data.frames, as we need to apply validations specifically at row level.
+## Why tidyvalidate?
 
-On the other hand, the `validate` package provides excellent tools to validate data.frames but they are divided into several functions to ensure flexibility.
+Data validation in R traditionally faces two challenges:
 
-## Solution
+1. Base R validation functions work well with vectors but become cumbersome when working with data frames, especially for row-level validations
+2. The `validate` package offers comprehensive validation capabilities but requires multiple function calls for common use cases
 
-`tidyvalidate` aims to simplify the tools provided by the validate package to make it easier to identify errors and share the results in any useful way, like a QC report.
+`tidyvalidate` addresses these challenges by providing a streamlined interface that makes data validation both powerful and easy to use.
 
-## Example - Finding errors
+## Basic Usage
 
-The `validate_rules()` function can find errors at column and row level by passing a list with the **summary** and **row_level_errors**.
+Let's start with a simple example using the built-in `mtcars` dataset:
 
 ```{r setup}
 library(tidyvalidate)
 
-simple_validation <-
-  validate_rules(mtcars,
-                 mpg_string = is.character(mpg),
-                 hp_numeric = is.numeric(hp),
-                 mpg_low = mpg > 15)
-
+# Define and run validations
+validation_results <- validate_rules(
+  mtcars,
+  # Column-level validation
+  mpg_type = is.numeric(mpg),
+  hp_type = is.numeric(hp),
+  # Row-level validation
+  mpg_threshold = mpg > 15
+)
 ```
 
-- **summary** is a data.table showing in the **fails column** the mistakes found, at column with *mpg_string* and row level with the *mpg_low*.
+### Understanding the Results
+
+The `validate_rules()` function returns a list with two components:
+
+#### 1. Summary of All Validations
 
 ```{r}
-simple_validation$summary
+validation_results$summary
 ```
 
-- **row_level_errors** is a list of data.tables with an element for each broken rule related to elements at row level. In this example, it only shows the *mpg_low* as it is the only row level rule with failed rows.
+The summary table shows:
+- Which rules passed or failed
+- How many items were checked for each rule
+- The number of failures and NA values
+
+#### 2. Detailed Row-Level Errors
 
 ```{r}
-simple_validation$row_level_errors
+validation_results$row_level_errors
 ```
 
-### Adding indentifiers at row level
+This list contains data tables showing exactly which rows failed each validation rule, but only for row-level rules (like our `mpg_threshold`).
 
-When validating elements at row level, it is useful to add columns that are not related to the test itself but are useful to identify the individual elements with errors.
+## Advanced Features
+
+### Adding Row Identifiers
+
+When working with real datasets, you often need to identify which specific records failed validation. Here's how to include identifiers in the error output:
 
 ```{r}
-# Creating an unique identifier for each row
-mtcars_names <- mtcars
-mtcars_names$`Car (Name)` <- rownames(mtcars_names)
-rownames(mtcars_names) <- NULL
+# Add row names as a column
+cars_with_names <- mtcars
+cars_with_names$car_name <- rownames(mtcars)
+rownames(cars_with_names) <- NULL
 
-# Results of validating at row level
-validate_rules(mtcars_names,
-               mpg_string = is.character(mpg),
-               hp_numeric = is.numeric(hp),
-               mpg_low = mpg > 15,
-               keep_rl_cols = "Car (Name)")$row_level_errors
+# Validate with identifiers
+validation_with_ids <- validate_rules(
+  cars_with_names,
+  mpg_threshold = mpg > 15,
+  keep_rl_cols = "car_name"  # Include car_name in error output
+)
+
+# View failures with identifiers
+validation_with_ids$row_level_errors
 ```
 
+### Using Dynamic Validation Rules
 
-### Validating based on enviroment variables
+You can make your validation rules dynamic by using variables. There are two ways to do this:
 
-Sometimes we need to create dynamic validations based on variables from the global environment as you see below.
+#### 1. Using Environment Variables
 
 ```{r}
+# Define threshold in environment
 min_mpg <- 12
 
-validate_rules(mtcars_names,
-               mpg_string = is.character(mpg),
-               hp_numeric = is.numeric(hp),
-               mpg_low = mpg > min_mpg,
-               keep_rl_cols = "Car (Name)")
+# Use environment variable in validation
+validate_rules(
+  mtcars,
+  mpg_minimum = mpg > min_mpg
+)
 ```
 
-In those cases, we can also pass a list of elements to the `env` argument.
+#### 2. Using the `env` Parameter (Recommended)
 
 ```{r}
-validate_rules(mtcars_names,
-               mpg_string = is.character(mpg),
-               hp_numeric = is.numeric(hp),
-               mpg_low = mpg > var_min_mpg,
-               env = list(var_min_mpg = min_mpg),
-               keep_rl_cols = "Car (Name)")
+# Pass variables explicitly
+validate_rules(
+  mtcars,
+  mpg_minimum = mpg > threshold,
+  env = list(threshold = 12)  # More explicit and safer
+)
 ```
 
+## Taking Action on Validation Failures
 
-## Example - Alerting if error
+The `action_if_problem()` function helps you handle validation failures appropriately. It offers two modes:
 
-Having a report to identify mistakes is really useful, but we don't always want to see the same summaries if all results are good, but we want to be alerted about it.
+### 1. Stop on Failure
 
-That's the main purpose of the `action_if_problem()` function. It has the following actions available:
-
-- **stop**: The *(default)* option will show an error if any the rows listed present an failed element.
+Use this when you want to halt execution if validations fail:
 
 ```{r}
 try({
-  validate_rules(mtcars,
-                 mpg_string = is.character(mpg),
-                 hp_numeric = is.numeric(hp),
-                 mpg_low = mpg > 15) |>
-    action_if_problem("We shound't have cars with low mpg",
-                      problem_action = "stop")
+  validate_rules(mtcars, mpg_minimum = mpg > 15) |>
+    action_if_problem(
+      message_text = "Validation failed: Some cars have low MPG",
+      problem_action = "stop"
+    )
 })
 ```
 
-- **warning**: It will let you know that there is a problem without stopping the code from running and returning the same results provided by the `validate_rules()` function.
+### 2. Warning on Failure
+
+Use this when you want to continue execution but be notified of failures:
 
 ```{r}
-warning_results <-
-  validate_rules(mtcars,
-                 mpg_string = is.character(mpg),
-                 hp_numeric = is.numeric(hp),
-                 mpg_low = mpg > 15) |>
-  action_if_problem("We shound't have cars with low mpg",
-                    problem_action = "warning")
+results_with_warning <- validate_rules(mtcars, mpg_minimum = mpg > 15) |>
+  action_if_problem(
+    message_text = "Warning: Some cars have low MPG",
+    problem_action = "warning"
+  )
 
-warning_results
+# Processing continues and you can still access results
+results_with_warning
 ```
+
+## Best Practices
+
+1. Always include meaningful rule names that describe the validation
+2. Use `keep_rl_cols` to include identifying columns in error reports
+3. Prefer the `env` parameter over environment variables for dynamic thresholds
+4. Choose appropriate actions based on how critical the validation is:
+   - Use "stop" for critical data quality issues
+   - Use "warning" for advisory checks
+
+## Next Steps
+
+- Explore the `validate` package documentation for more complex validation rules
+- Check out the other vignettes for advanced usage patterns
+- Consider contributing to the package on GitHub

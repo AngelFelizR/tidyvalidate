@@ -2,30 +2,70 @@
 % Please edit documentation in R/action_if_problem.R
 \name{action_if_problem}
 \alias{action_if_problem}
-\title{Stop the script if any problem found}
+\title{Handle Validation Rule Violations with Custom Actions}
 \usage{
 action_if_problem(x, message_text, problem_action = c("stop", "warning"))
 }
 \arguments{
-\item{x}{A list containing the summary from \code{\link[=validate_rules]{validate_rules()}}.}
+\item{x}{A list containing validation results, typically the output from
+\code{\link[=validate_rules]{validate_rules()}}. Must contain a 'summary' element with columns
+for 'fails' and other validation metrics.}
 
-\item{message_text}{The message to display when applying the action.}
+\item{message_text}{Character string containing the message to display when
+violations are found. This message will appear in both the
+console output and the error/warning.}
 
-\item{problem_action}{Select if you want to display warning or stop the code.}
+\item{problem_action}{Character string specifying the action to take when
+violations are found. Must be either "stop" (to halt
+execution with an error) or "warning" (to continue
+execution after showing a warning).}
 }
 \value{
-The list passed as first argument.
+Invisibly returns the input list \code{x}. Note that if problem_action
+is "stop" and violations are found, execution will halt before
+returning.
 }
 \description{
-Stop the script if any problem found
+Takes the results of data validation checks and performs a specified action
+(either stopping execution or raising a warning) when validation rules are violated.
+The function provides detailed feedback about which rules failed before taking the
+specified action.
+}
+\details{
+The function performs these steps:
+\enumerate{
+\item Checks if any validation rules were violated (fails > 0)
+\item If violations exist:
+\itemize{
+\item Prints the provided message_text
+\item Displays a summary of only the failed rules
+\item Either stops execution or raises a warning based on problem_action
+}
+\item If no violations exist, silently returns the input
+}
+
+This function is particularly useful in data processing pipelines where you
+want to ensure data quality before proceeding with further analysis.
 }
 \examples{
+# Example showing how to stop execution on validation failures
 try({
-  validate_rules(mtcars, "hp high" = hp < 200) |>
-    action_if_problem("Here is the error", "stop")
+  validate_rules(mtcars, "hp_limit" = hp < 200) |>
+    action_if_problem(
+      message_text = "Validation failed: Some cars exceed HP limit",
+      problem_action = "stop"
+    )
 })
 
+# Example showing how to continue with a warning
+validation_results <- validate_rules(mtcars, "hp_limit" = hp < 200) |>
+  action_if_problem(
+    message_text = "Warning: Some cars exceed HP limit",
+    problem_action = "warning"
+  )
 
-validate_rules(mtcars, "hp high" = hp < 200) |>
-  action_if_problem("Here is the warning", "warning")
+}
+\seealso{
+\code{\link{validate_rules}} for creating the validation results this
+function processes
 }

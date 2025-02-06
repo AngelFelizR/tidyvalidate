@@ -2,7 +2,7 @@
 % Please edit documentation in R/validate_rules.R
 \name{validate_rules}
 \alias{validate_rules}
-\title{Validate domain knowing in a data.frame}
+\title{Validate Data Frame Values Against Business Rules}
 \usage{
 validate_rules(
   df,
@@ -13,38 +13,71 @@ validate_rules(
 )
 }
 \arguments{
-\item{df}{A data.frame or data.table to perform the analysis.}
+\item{df}{A data.frame or data.table containing the data to validate}
 
-\item{...}{A comma-separated list of validating expressions}
+\item{...}{Validation rules expressed as named R expressions (e.g., "age_check" = age >= 18)}
 
-\item{env}{A list with all the variables we want to make available in the validation rules.}
+\item{env}{A list of variables to be used within the validation rules. These variables
+can be referenced directly in the rule expressions (e.g., list(min_age = 18))}
 
-\item{keep_rl_cols}{Defining the columns to keep all data.table of broken row level rules.}
+\item{keep_rl_cols}{Character vector specifying additional columns to include in the
+row-level error output, besides those used in the validation rules}
 
-\item{select_rl_rules}{Defining which row level rules to return as data.table in the row_level_errors element.}
+\item{select_rl_rules}{Character vector specifying which row-level rules to analyze.
+If NULL (default), analyzes all failing rules}
 }
 \value{
-This function return a list of 2 elements:
+A list containing two elements:
 \itemize{
-\item summary: Return data.table with the result of all checks.
-\item row_level_errors: Return a list of data.frames containing the column \strong{Broken Rule}, the columns listed in the \code{keep_rl_cols} and the columns used to perform the validation.
+\item summary: A data.table containing validation results for all rules, including:
+\itemize{
+\item name: The name of the validation rule
+\item items: Number of items checked
+\item passes: Number of passing checks
+\item fails: Number of failing checks
+\item nNA: Number of NA values encountered
+}
+\item row_level_errors: A list of data.tables, one for each failing rule, containing:
+\itemize{
+\item Broken Rule: The name of the failed validation rule
+\item Columns used in the validation rule
+\item Additional columns specified in keep_rl_cols
+}
 }
 }
 \description{
-This function if a wrappers from many utilities from the validate package.
+A high-level wrapper around the \code{validate} package that performs data validation
+checks against a set of user-defined business rules. The function accepts a data frame
+and a set of validation rules, then returns both a summary of validation results and
+detailed information about any violations at the row level.
+}
+\details{
+The function provides two key benefits:
+\enumerate{
+\item It simplifies the process of validating data against multiple business rules
+\item It makes it easy to identify specific rows that violate each rule
+}
+
+The function will stop with an error if any validation rule returns NA values,
+as these are considered invalid results rather than rule violations.
 }
 \examples{
-validation_list <- 
-  data.table::as.data.table(mtcars, 
-                            keep.rownames = "Car (Name)") |>
-  validate_rules("mpg low" = mpg > min_mpg,
-                 "hp high" = hp < 200,
-                 env = list(min_mpg = 15),
-                 keep_rl_cols = "Car (Name)")
+# Validate car data against mpg and horsepower rules
+validation_results <- data.table::as.data.table(mtcars, keep.rownames = "Car Name") |>
+  validate_rules(
+    "mpg_minimum" = mpg > min_mpg,
+    "hp_maximum" = hp < 200,
+    env = list(min_mpg = 15),
+    keep_rl_cols = "Car Name"
+  )
 
-names(validation_list)
+# View summary of all rules
+validation_results$summary
 
-validation_list$summary
+# View specific rows that violated each rule
+validation_results$row_level_errors
 
-validation_list$row_level_errors
+}
+\seealso{
+\code{\link[validate]{validator}}, \code{\link[validate]{confront}}
 }

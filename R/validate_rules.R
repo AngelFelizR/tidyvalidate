@@ -1,34 +1,65 @@
-#' Validate domain knowledge in a data.frame
+#' Validate Data Frame Values Against Business Rules
 #'
-#' This function is a wrapper for many utilities from the validate package.
+#' A high-level wrapper around the `validate` package that performs data validation
+#' checks against a set of user-defined business rules. The function accepts a data frame
+#' and a set of validation rules, then returns both a summary of validation results and
+#' detailed information about any violations at the row level.
 #'
-#' @param df A data.frame or data.table to perform the analysis.
-#' @inheritParams validate::validator
-#' @param env A list with all the variables we want to make available in the validation rules.
-#' @param keep_rl_cols Defining the columns to keep all data.table of broken row level rules.
-#' @param select_rl_rules Defining which row level rules to return as data.table in the row_level_errors element.
+#' @param df A data.frame or data.table containing the data to validate
+#' @param ... Validation rules expressed as named R expressions (e.g., "age_check" = age >= 18)
+#' @param env A list of variables to be used within the validation rules. These variables
+#'           can be referenced directly in the rule expressions (e.g., list(min_age = 18))
+#' @param keep_rl_cols Character vector specifying additional columns to include in the
+#'                    row-level error output, besides those used in the validation rules
+#' @param select_rl_rules Character vector specifying which row-level rules to analyze.
+#'                       If NULL (default), analyzes all failing rules
 #'
-#' @return
-#' This function returns a list of 2 elements:
-#' - summary: Returns a data.table with the result of all checks.
-#' - row_level_errors: Returns a list of data.tables containing the column **Broken Rule**, the columns listed in the `keep_rl_cols` and the columns used to perform the validation.
+#' @return A list containing two elements:
+#'   \itemize{
+#'     \item summary: A data.table containing validation results for all rules, including:
+#'       \itemize{
+#'         \item name: The name of the validation rule
+#'         \item items: Number of items checked
+#'         \item passes: Number of passing checks
+#'         \item fails: Number of failing checks
+#'         \item nNA: Number of NA values encountered
+#'       }
+#'     \item row_level_errors: A list of data.tables, one for each failing rule, containing:
+#'       \itemize{
+#'         \item Broken Rule: The name of the failed validation rule
+#'         \item Columns used in the validation rule
+#'         \item Additional columns specified in keep_rl_cols
+#'       }
+#'   }
 #'
-#' @export
+#' @details
+#' The function provides two key benefits:
+#' 1. It simplifies the process of validating data against multiple business rules
+#' 2. It makes it easy to identify specific rows that violate each rule
+#'
+#' The function will stop with an error if any validation rule returns NA values,
+#' as these are considered invalid results rather than rule violations.
 #'
 #' @examples
-#'validation_list <-
-#'   data.table::as.data.table(mtcars,
-#'                             keep.rownames = "Car (Name)") |>
-#'   validate_rules("mpg low" = mpg > min_mpg,
-#'                  "hp high" = hp < 200,
-#'                  env = list(min_mpg = 15),
-#'                  keep_rl_cols = "Car (Name)")
+#' # Validate car data against mpg and horsepower rules
+#' validation_results <- data.table::as.data.table(mtcars, keep.rownames = "Car Name") |>
+#'   validate_rules(
+#'     "mpg_minimum" = mpg > min_mpg,
+#'     "hp_maximum" = hp < 200,
+#'     env = list(min_mpg = 15),
+#'     keep_rl_cols = "Car Name"
+#'   )
 #'
-#' names(validation_list)
+#' # View summary of all rules
+#' validation_results$summary
 #'
-#' validation_list$summary
+#' # View specific rows that violated each rule
+#' validation_results$row_level_errors
 #'
-#' validation_list$row_level_errors
+#' @seealso
+#' \code{\link[validate]{validator}}, \code{\link[validate]{confront}}
+#'
+#' @export
 
 validate_rules = function(df,
                           ...,
