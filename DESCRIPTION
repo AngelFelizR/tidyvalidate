@@ -1,16 +1,16 @@
 Package: tidyvalidate
-Title: Simplify the use of 'validate' package
+Title: Simplify the Use of 'validate' Package
 Version: 0.1.0
 Authors@R: 
     person("Angel", "Feliz", , "angel.esteban.feliz@gmail.com", role = c("aut", "cre", "cph"))
-Description: `tidyvalidate` is a package that simplifies data validation in R 
-             by providing an intuitive interface to the powerful `validate` package.
-             It helps you ensure data quality before analysis by making it easy to 
-             check both column-level and row-level conditions in your data frames.
+Description: Simplifies data validation in R by providing an intuitive interface
+             to the powerful `validate` package. It helps you ensure data quality
+             before analysis by making it easy to check both column-level and
+             row-level conditions in your data frames.
 License: GPL (>= 3)
 URL: https://angelfelizr.github.io/tidyvalidate/, https://github.com/AngelFelizR/tidyvalidate
 Depends: 
-    R (>= 4.1.0)
+    R (>= 4.2.0)
 Imports: 
     data.table,
     stringr,
@@ -24,3 +24,5 @@ VignetteBuilder:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Author: Angel Feliz [aut, cre, cph]
+Maintainer: Angel Feliz <angel.esteban.feliz@gmail.com>

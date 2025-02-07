@@ -4,11 +4,11 @@
 \name{tidyvalidate-package}
 \alias{tidyvalidate}
 \alias{tidyvalidate-package}
-\title{tidyvalidate: Simplify the use of 'validate' package}
+\title{tidyvalidate: Simplify the Use of 'validate' Package}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-`tidyvalidate` is a package that simplifies data validation in R by providing an intuitive interface to the powerful `validate` package. It helps you ensure data quality before analysis by making it easy to check both column-level and row-level conditions in your data frames.
+Simplifies data validation in R by providing an intuitive interface to the powerful `validate` package. It helps you ensure data quality before analysis by making it easy to check both column-level and row-level conditions in your data frames.
 }
 \seealso{
 Useful links:
