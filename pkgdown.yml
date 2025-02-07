@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   tidyvalidate: tidyvalidate.html
-last_built: 2025-02-07T03:58Z
+last_built: 2025-02-07T04:19Z
 urls:
   reference: https://angelfelizr.github.io/tidyvalidate/reference
   article: https://angelfelizr.github.io/tidyvalidate/articles
